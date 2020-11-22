@@ -59,8 +59,8 @@ public class InvoiceResource {
     @GetMapping("/{id}")
     public Invoice get(@PathVariable("id") String number){
         Invoice invoice = invoiceService.getInvoiceById(number);
-        final Customer customer = restTemplate.getForObject("http://localhost:8081/customer/"+invoice.getIdCustomer(),Customer.class);
-        final Address address = restTemplate.getForObject("http://localhost:8081/address/"+customer.getAddress().getId(),Address.class);
+        final Customer customer = restTemplate.getForObject("http://customer-service/customer/"+invoice.getIdCustomer(),Customer.class);
+        final Address address = restTemplate.getForObject("http://customer-service/address/"+customer.getAddress().getId(),Address.class);
         customer.setAddress(address);
         invoice.setCustomer(customer);
         return invoice;
@@ -72,7 +72,7 @@ public class InvoiceResource {
         Iterable<Invoice> invoices = invoiceService.getInvoiceList();
         invoices.forEach(invoice -> {
             //invocation du microservice customer avec son url+son id
-            invoice.setCustomer(restTemplate.getForObject("http://localhost:8081/customer/"+invoice.getIdCustomer(),Customer.class));
+            invoice.setCustomer(restTemplate.getForObject("http://customer-service/customer/"+invoice.getIdCustomer(),Customer.class));
         });
         return  invoices;
 
